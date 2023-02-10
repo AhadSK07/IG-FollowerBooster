@@ -12,54 +12,70 @@ class SendFollowers:
         self.username = username
         self.password = password
         self.to_send = to_send
-        self.crd_response = None
-        self.folo_response = None
+        self.credits_response = None
+        self.followers_response = None
         self.session.headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36'
         self.main()
         
     def login(self, retry=False):
         print(f"Website Domain: {self.parsed_url.netloc}")
         try:
-            login = self.session.post(self.login_url, data={'username': self.username, 'password': self.password}).json()
+            response = self.session.post(self.login_url, data={'username': self.username, 'password': self.password})
+            login = response.json()
             if 'returnUrl' in login:
-                print("Logged Successfully")
+                print("Logged in successfully")
                 return login['returnUrl']
             else:
-                print(f"Login Failed\nError Message: {login['error']}")
-        except:
-            if retry != True:
-                print("Login Failed\nError Message: Failed to Get Json Data\nRetrying... Login")
-                return self.login(True)
+                raise Exception(f"Login failed. Error message: {login['error']}")
+        except Exception as e:
+            if retry:
+                print(f"Login failed. Error message: {e}")
             else:
-                print("Login Failed\nError Message: Failed to Get Json Data")
+                print("Login failed. Error message: Failed to get JSON data. Retrying...")
+                return self.login(True)
 
     def get_credits(self, return_path):
-        self.crd_response = self.session.get(f"{self.parsed_url.scheme}://{self.parsed_url.netloc}{return_path}")
-        soup = BeautifulSoup(self.crd_response.text, 'html.parser')
-        return soup.find(id='takipKrediCount').text
+        url = f"{self.parsed_url.scheme}://{self.parsed_url.netloc}{return_path}"
+        self.credits_response = self.session.get(url)
+        soup = BeautifulSoup(self.credits_response.text, 'html.parser')
+        credits = soup.find(id='takipKrediCount')
+        if credits:
+            return credits.text
+        else:
+            raise Exception(f"Unable to find credits in the response from {url}")
 
     def send_followers(self, credits, retry=False):
-        self.folo_response = self.session.post(f"{self.crd_response.url}/send-follower?formType=findUserID", data={'username': self.to_send})
-        send_data = {'adet': credits, 'userID': self.folo_response.url.split("/")[-1], 'userName': self.to_send}
-        send = self.session.post(f"{self.folo_response.url}?formType=send", data=send_data).json()
-        if send['status'] != 'success':
-            if retry != True:
-                print(f"Failed to Send Followers\nError Message: {send['message']}\nRetrying... after 1Min")
-                sleep(60)
-                return self.send_followers(credits, True)
+        try:
+            self.folo_response = self.session.post(
+                f"{self.credits_response.url}/send-follower?formType=findUserID",
+                data={'username': self.to_send}
+            )
+            user_id = self.followers_response.url.split("/")[-1]
+            send = self.session.post(
+                f"{self.followers_response.url}?formType=send",
+                data={'adet': credits, 'userID': user_id, 'userName': self.to_send}
+            ).json()
+            if send['status'] == 'success':
+                print(f"Followers sent successfully to {self.to_send}. Sleeping for 2 minutes...")
+                sleep(120)
             else:
-                print(f"Failed to Send Followers\nError Message: {send['message']}") 
-        else:
-            print(f"Send Followers Done to {self.to_send}\nSleeping... for 2Min")
-            sleep(120)
+                raise Exception(send['message'])
+        except Exception as error:
+            if retry:
+                print(f"Failed to send followers. Error message: {error}")
+            else:
+                print(f"Failed to send followers. Error message: {error}. Retrying after 1 minute...")
+                sleep(60)
+                self.send_followers(credits, True)
 
     def main(self):
         return_path = self.login()
-        if return_path == None:
+        if not return_path:
             return
         credits = self.get_credits(return_path)
-        if credits != '0':
-            print(credits)
-            self.send_followers(credits)
+        if credits == '0':
+            print("No credits left.")
         else:
-            print("No Credits Left")
+            print(f"Sending {credits} followers.")
+            self.send_followers(credits)
+
