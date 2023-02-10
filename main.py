@@ -1,5 +1,5 @@
 import json
-from followers import SendFollowers
+from followers import FollowersSender
 from pwd_change import ChangePassword
 
 URLS = [
@@ -18,5 +18,5 @@ with open("accounts.json", "r") as file:
     for account_name, account_password in accounts.items():
         print(f"Account: {account_name}")
         for url in URLS:
-            SendFollowers(url, account_name, account_password, "ah4d1337")
+            FollowersSender(url, account_name, account_password, "ah4d1337").run()
         ChangePassword(account_name, account_password, accounts)
