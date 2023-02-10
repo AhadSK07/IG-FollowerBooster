@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 from time import sleep
 
 
-class SendFollowers:
+class FollowersSender:
     def __init__(self, login_url, username, password, to_send):
         self.session = Session()
         self.login_url = login_url
@@ -15,7 +15,6 @@ class SendFollowers:
         self.credits_response = None
         self.followers_response = None
         self.session.headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36'
-        self.main()
         
     def login(self, retry=False):
         print(f"Website Domain: {self.parsed_url.netloc}")
@@ -68,7 +67,7 @@ class SendFollowers:
                 sleep(60)
                 self.send_followers(credits, True)
 
-    def main(self):
+    def run(self):
         return_path = self.login()
         if not return_path:
             return
