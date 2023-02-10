@@ -46,7 +46,7 @@ class SendFollowers:
 
     def send_followers(self, credits, retry=False):
         try:
-            self.folo_response = self.session.post(
+            self.followers_response = self.session.post(
                 f"{self.credits_response.url}/send-follower?formType=findUserID",
                 data={'username': self.to_send}
             )
