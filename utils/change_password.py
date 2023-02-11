@@ -1,6 +1,7 @@
 import json
+from random
+import string
 from requests import Session
-from random import randint, sample
 
 
 class PasswordChanger:
@@ -25,8 +26,12 @@ class PasswordChanger:
         self.login_and_change()
 
     def gen_password(self):
-        keys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"+"abcdefghijklmnopqrstuvwxyz"+"1234567890".lower()
-        password = "".join(sample(keys, randint(8, 16)))
+        upper_letters = string.ascii_uppercase
+        lower_letters = string.ascii_lowercase
+        numbers = string.digits
+        symbols = string.punctuation
+        password_characters = upper_letters + lower_letters + numbers + symbols
+        password = ''.join(random.choice(password_characters) for i in range(16))
         return password
 
     def login_and_change(self):
