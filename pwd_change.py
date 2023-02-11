@@ -75,7 +75,7 @@ class ChangePassword:
         change_response = self.session.post(self.change_pwd_url, data=self.data_change).json()
         if change_response['status'] == 'ok':
             print(f"Password Changed {self.password} to {self.new_password}")
-            with open("accounts.json", "w") as file:
+            with open("config.json", "w") as file:
                 self.accounts[self.username] = self.new_password
                 json.dump(self.accounts, file)
         else:
