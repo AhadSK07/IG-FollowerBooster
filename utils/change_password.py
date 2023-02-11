@@ -14,17 +14,7 @@ class PasswordChanger:
         self.new_password = self.generate_password()
         self.login_url = 'https://www.instagram.com/accounts/login/ajax/'
         self.change_pwd_url = 'https://www.instagram.com/accounts/password/change/'
-        self.data_login = {
-            'username': self.username,
-            'enc_password': f'#PWD_INSTAGRAM_BROWSER:0:&:{self.password}'
-            }
-        self.data_change = {
-            'enc_old_password': f'#PWD_INSTAGRAM_BROWSER:0:&:{self.password}',
-            'enc_new_password1': f'#PWD_INSTAGRAM_BROWSER:0:&:{self.new_password}',
-            'enc_new_password2': f'#PWD_INSTAGRAM_BROWSER:0:&:{self.new_password}'
-            }
         self.user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36'
-        self.login_and_change()
 
     def generate_password(self):
         upper_letters = string.ascii_uppercase
@@ -77,18 +67,32 @@ class PasswordChanger:
             'x-requested-with': 'XMLHttpRequest'
             })
 
-    def login_and_change(self):
+    def login(self):
         self.setup_session()
-        login = self.session.post(self.login_url, data=self.data_login)
-        self.update_session_headers(login_cookies)
-        if 'userId' not in login.json():
-            print(f"Login Problem! {login.json()}")
-            return
-        change_response = self.session.post(self.change_pwd_url, data=self.data_change).json()
+        login_data = {'username': self.username, 'enc_password': f'#PWD_INSTAGRAM_BROWSER:0:&:{self.password}'}
+        response = self.session.post(self.login_url, data=login_data)
+        response_json = response.json()
+        if 'userId' not in response_json:
+            print(f"Login Failed! {response_json}")
+        else:
+            print("Instagram login successful")
+            self.update_session_headers(response.cookies)
+
+    def change_password(self):
+        change_data = {
+            'enc_old_password': f'#PWD_INSTAGRAM_BROWSER:0:&:{self.password}',
+            'enc_new_password1': f'#PWD_INSTAGRAM_BROWSER:0:&:{self.new_password}',
+            'enc_new_password2': f'#PWD_INSTAGRAM_BROWSER:0:&:{self.new_password}'
+        }
+        response = self.session.post(self.change_pwd_url, data=change_data).json()
         if change_response['status'] == 'ok':
-            print(f"Password Changed {self.password} to {self.new_password}")
+            print(f"Password Changed from {self.password} to {self.new_password}")
             with open("config.json", "w") as file:
                 self.accounts[self.username] = self.new_password
                 json.dump(self.accounts, file)
         else:
-            print(change_response['errors'])
+            print(f"Password Change Failed: {response['errors']}")
+
+    def run(self):
+        self.login()
+        self.change_password()
