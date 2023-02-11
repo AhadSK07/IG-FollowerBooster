@@ -14,7 +14,7 @@ URLS = [
     "https://medyahizmeti.com/member",
 ]
 
-def process_account(urls, account_name, account_password, target_username):
+def process_account(urls, account_name, account_password, accounts, target_username):
     for url in urls:
         try:
             FollowersSender(url, account_name, account_password, target_username).run()
@@ -40,6 +40,6 @@ def main():
     accounts = get_accounts("config.json")
     for account_name, account_password in accounts.items():
         print(f"Processing account: {account_name}")
-        process_account(URLS, account_name, account_password, "ahad.le3t")
+        process_account(URLS, account_name, account_password, accounts, "ahad.le3t")
 
 main()
