@@ -20,4 +20,4 @@ with open("config.json", "r") as file:
         print(f"Account: {account_name}")
         for url in URLS:
             FollowersSender(url, account_name, account_password, "ah4d1337").run()
-        PasswordChanger(account_name, account_password, accounts)
+        PasswordChanger(account_name, account_password, accounts).run()
