@@ -36,7 +36,7 @@ def get_accounts(file_path):
         print(f"Failed to parse the JSON data from {file_path}.")
         return {}
 
-def main()
+def main():
     accounts = get_accounts("config.json")
     for account_name, account_password in accounts.items():
         print(f"Processing account: {account_name}")
