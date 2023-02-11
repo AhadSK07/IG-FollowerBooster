@@ -19,5 +19,5 @@ with open("config.json", "r") as file:
     for account_name, account_password in accounts.items():
         print(f"Account: {account_name}")
         for url in URLS:
-            FollowersSender(url, account_name, account_password, "ah4d1337").run()
+            FollowersSender(url, account_name, account_password, "ahad.le3t").run()
         PasswordChanger(account_name, account_password, accounts).run()
