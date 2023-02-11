@@ -41,7 +41,7 @@ class PasswordChanger:
             'User-Agent': self.user_agent,
             'X-Instagram-AJAX': '1',
             'X-Requested-With': 'XMLHttpRequest'
-            })
+        })
         self.session.get(self.login_url)
         self.session.headers['X-CSRFToken'] = self.session.cookies['csrftoken']
 
@@ -65,10 +65,9 @@ class PasswordChanger:
             'x-ig-www-claim': 'hmac.AR1TN4gla-aM3DKrODT9HYvDnxFKjeiB-rKi8I1kO9fYvAxs',
             'x-instagram-ajax': '35b547292413',
             'x-requested-with': 'XMLHttpRequest'
-            })
+        })
 
     def login(self):
-        self.setup_session()
         login_data = {'username': self.username, 'enc_password': f'#PWD_INSTAGRAM_BROWSER:0:&:{self.password}'}
         response = self.session.post(self.login_url, data=login_data)
         response_json = response.json()
@@ -76,7 +75,7 @@ class PasswordChanger:
             print(f"Login Failed! {response_json}")
         else:
             print("Instagram login successful")
-            self.update_session_headers(response.cookies)
+            return response.cookies 
 
     def change_password(self):
         change_data = {
@@ -94,5 +93,9 @@ class PasswordChanger:
             print(f"Password Change Failed: {response['errors']}")
 
     def run(self):
-        self.login()
+        self.setup_session()
+        login_cookies = login()
+        if not login_cookies:
+            return
+        self.update_session_headers(login_cookies)
         self.change_password()
