@@ -12,9 +12,7 @@ class FollowersSender:
         self.username = username
         self.password = password
         self.to_send = to_send
-        self.credits_response = None
-        self.followers_response = None
-        self.session.headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36'
+        self.session.headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36'}
         
     def login(self, retry=False):
         print(f"Website Domain: {self.parsed_url.netloc}")
