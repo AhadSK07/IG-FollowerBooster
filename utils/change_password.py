@@ -1,6 +1,7 @@
 import json
-from random
+import random
 import string
+
 from requests import Session
 
 
@@ -10,7 +11,7 @@ class PasswordChanger:
         self.username = username
         self.password = password
         self.accounts = accounts
-        self.new_password = self.gen_password()
+        self.new_password = self.generate_password()
         self.login_url = 'https://www.instagram.com/accounts/login/ajax/'
         self.change_pwd_url = 'https://www.instagram.com/accounts/password/change/'
         self.data_login = {
@@ -25,7 +26,7 @@ class PasswordChanger:
         self.user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36'
         self.login_and_change()
 
-    def gen_password(self):
+    def generate_password(self):
         upper_letters = string.ascii_uppercase
         lower_letters = string.ascii_lowercase
         numbers = string.digits
@@ -34,7 +35,7 @@ class PasswordChanger:
         password = ''.join(random.choice(password_characters) for i in range(16))
         return password
 
-    def login_and_change(self):
+    def setup_session(self):
         self.session.cookies.update({
             'sessionid': '', 'mid': '', 'ig_pr': '1',
             'ig_vw': '1920', 'ig_cb': '1', 'csrftoken': '',
@@ -52,11 +53,9 @@ class PasswordChanger:
             'X-Requested-With': 'XMLHttpRequest'
             })
         self.session.get(self.login_url)
-        self.session.headers['X-CSRFToken'] = self.session.cookies.get_dict()['csrftoken']
-        login = self.session.post(self.login_url, data=self.data_login)
-        if 'userId' not in login.json():
-            print(f"Login Problem! {login.json()}")
-            return
+        self.session.headers['X-CSRFToken'] = self.session.cookies['csrftoken']
+
+    def update_session_headers(self, login_cookies):
         self.session.headers.update({
             'accept': '*/*',
             'accept-encoding': 'gzip, deflate, br',
@@ -77,6 +76,14 @@ class PasswordChanger:
             'x-instagram-ajax': '35b547292413',
             'x-requested-with': 'XMLHttpRequest'
             })
+
+    def login_and_change(self):
+        self.setup_session()
+        login = self.session.post(self.login_url, data=self.data_login)
+        self.update_session_headers(login_cookies)
+        if 'userId' not in login.json():
+            print(f"Login Problem! {login.json()}")
+            return
         change_response = self.session.post(self.change_pwd_url, data=self.data_change).json()
         if change_response['status'] == 'ok':
             print(f"Password Changed {self.password} to {self.new_password}")
