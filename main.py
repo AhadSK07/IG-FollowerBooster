@@ -13,7 +13,7 @@ URLS = [
     "https://medyahizmeti.com/member",
 ]
 
-with open("accounts.json", "r") as file:
+with open("config.json", "r") as file:
     accounts = json.load(file)
     for account_name, account_password in accounts.items():
         print(f"Account: {account_name}")
