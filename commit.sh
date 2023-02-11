@@ -1,7 +1,7 @@
 git config --global user.name $GH_USERNAME
 git config --global user.email $GH_MAIL
 git clone https://github.com/$GITHUB_REPOSITORY repo
-mv accounts.json repo/accounts.json
+mv config.json repo/config.json
 cd repo || exit 1
 git add accounts.json
 git commit -m "Update Accounts Password"
