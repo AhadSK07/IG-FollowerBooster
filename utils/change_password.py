@@ -70,7 +70,7 @@ class PasswordChanger:
             'sec-fetch-mode': 'cors',
             'sec-fetch-site': 'same-origin',
             'user-agent': self.user_agent,
-            'x-csrftoken': login.cookies['csrftoken'],
+            'x-csrftoken': login_cookies['csrftoken'],
             'x-ig-app-id': '936619743392459',
             'x-ig-www-claim': 'hmac.AR1TN4gla-aM3DKrODT9HYvDnxFKjeiB-rKi8I1kO9fYvAxs',
             'x-instagram-ajax': '35b547292413',
