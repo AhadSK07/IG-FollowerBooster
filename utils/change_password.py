@@ -94,7 +94,7 @@ class PasswordChanger:
 
     def run(self):
         self.setup_session()
-        login_cookies = login()
+        login_cookies = self.login()
         if not login_cookies:
             return
         self.update_session_headers(login_cookies)
