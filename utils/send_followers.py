@@ -1,6 +1,5 @@
 from requests import Session
 from urllib.parse import urlparse
-from bs4 import BeautifulSoup
 from time import sleep
 
 
@@ -34,10 +33,12 @@ class FollowersSender:
     def get_credits(self, return_path):
         url = f"{self.parsed_url.scheme}://{self.parsed_url.netloc}{return_path}"
         self.credits_response = self.session.get(url)
-        soup = BeautifulSoup(self.credits_response.text, 'html.parser')
-        credits = soup.find(id='takipKrediCount')
-        if credits:
-            return credits.text
+        credits_text = 'takipKrediCount'
+        start = self.credits_response.text.find(f'id="{credits_text}"')
+        if start != -1:
+            start = self.credits_response.text.find('>', start) + 1
+            end = self.credits_response.text.find('<', start)
+            return self.credits_response.text[start:end].strip()
         else:
             raise Exception(f"Unable to find credits in the response from {url}")
 
