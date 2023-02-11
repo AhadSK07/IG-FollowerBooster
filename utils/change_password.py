@@ -3,7 +3,7 @@ from requests import Session
 from random import randint, sample
 
 
-class ChangePassword:
+class PasswordChanger:
     def __init__(self, username, password, accounts):
         self.session = Session()
         self.username = username
