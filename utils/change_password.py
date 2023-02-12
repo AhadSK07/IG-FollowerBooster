@@ -42,6 +42,8 @@ class PasswordChanger:
             'X-Instagram-AJAX': '1',
             'X-Requested-With': 'XMLHttpRequest'
         })
+        self.session.get(self.login_url)
+        self.session.headers['X-CSRFToken'] = self.session.cookies.get_dict()['csrftoken']
 
     def update_session_headers(self, login_cookies):
         self.session.headers.update({
@@ -64,8 +66,6 @@ class PasswordChanger:
             'x-instagram-ajax': '35b547292413',
             'x-requested-with': 'XMLHttpRequest'
         })
-        self.session.get(self.login_url)
-        self.session.headers['X-CSRFToken'] = self.session.cookies.get_dict()['csrftoken']
 
     def login(self):
         login_data = {'username': self.username, 'enc_password': f'#PWD_INSTAGRAM_BROWSER:0:&:{self.password}'}
