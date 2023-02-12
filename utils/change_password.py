@@ -84,7 +84,7 @@ class PasswordChanger:
             'enc_new_password2': f'#PWD_INSTAGRAM_BROWSER:0:&:{self.new_password}'
         }
         response = self.session.post(self.change_pwd_url, data=change_data).json()
-        if change_response['status'] == 'ok':
+        if response['status'] == 'ok':
             print(f"Password Changed from {self.password} to {self.new_password}")
             with open("config.json", "w") as file:
                 self.accounts[self.username] = self.new_password
