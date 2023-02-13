@@ -20,8 +20,7 @@ class PasswordChanger:
         upper_letters = string.ascii_uppercase
         lower_letters = string.ascii_lowercase
         numbers = string.digits
-        symbols = string.punctuation
-        password_characters = upper_letters + lower_letters + numbers + symbols
+        password_characters = upper_letters + lower_letters + numbers
         password = ''.join(random.choice(password_characters) for i in range(16))
         return password
 
