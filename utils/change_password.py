@@ -17,10 +17,7 @@ class PasswordChanger:
         self.user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36'
 
     def generate_password(self):
-        upper_letters = string.ascii_uppercase
-        lower_letters = string.ascii_lowercase
-        numbers = string.digits
-        password_characters = upper_letters + lower_letters + numbers
+        password_characters = string.ascii_uppercase + string.ascii_lowercase + string.digits
         password = ''.join(random.choice(password_characters) for i in range(16))
         return password
 
