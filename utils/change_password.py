@@ -18,8 +18,7 @@ class PasswordChanger:
 
     def generate_password(self):
         password_characters = string.ascii_uppercase + string.ascii_lowercase + string.digits
-        password = ''.join(random.choice(password_characters) for i in range(16))
-        return password
+        return ''.join(random.choice(password_characters) for _ in range(16))
 
     def setup_session(self):
         self.session.cookies.update({
