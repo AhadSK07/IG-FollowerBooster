@@ -18,11 +18,10 @@ class FollowersSender:
         try:
             response = self.session.post(self.login_url, data={'username': self.username, 'password': self.password})
             login = response.json()
-            if 'returnUrl' in login:
-                print("Logged in successfully")
-                return login['returnUrl']
-            else:
+            if 'returnUrl' not in login:
                 raise Exception(f"Login failed. Error message: {login['error']}")
+            print("Logged in successfully")
+            return login['returnUrl']
         except Exception as e:
             if retry:
                 print(f"Login failed. Error message: {e}")
@@ -35,12 +34,11 @@ class FollowersSender:
         self.credits_response = self.session.get(url)
         credits_text = 'takipKrediCount'
         start = self.credits_response.text.find(f'id="{credits_text}"')
-        if start != -1:
-            start = self.credits_response.text.find('>', start) + 1
-            end = self.credits_response.text.find('<', start)
-            return self.credits_response.text[start:end].strip()
-        else:
+        if start == -1:
             raise Exception(f"Unable to find credits in the response from {url}")
+        start = self.credits_response.text.find('>', start) + 1
+        end = self.credits_response.text.find('<', start)
+        return self.credits_response.text[start:end].strip()
 
     def send_followers(self, credits, retry=False):
         try:
@@ -53,11 +51,10 @@ class FollowersSender:
                 f"{self.followers_response.url}?formType=send",
                 data={'adet': credits, 'userID': user_id, 'userName': self.to_send}
             ).json()
-            if send['status'] == 'success':
-                print(f"Followers sent successfully to {self.to_send}. Sleeping for 2 minutes...")
-                sleep(120)
-            else:
+            if send['status'] != 'success':
                 raise Exception(send['message'])
+            print(f"Followers sent successfully to {self.to_send}. Sleeping for 2 minutes...")
+            sleep(120)
         except Exception as error:
             if retry:
                 print(f"Failed to send followers. Error message: {error}")
