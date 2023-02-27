@@ -40,6 +40,6 @@ def main():
     accounts = get_accounts("config.json")
     for account_name, account_password in accounts.items():
         print(f"Processing account: {account_name}")
-        process_account(URLS, account_name, account_password, accounts, "ahad.le3t")
+        process_account(URLS, account_name, account_password, accounts, "ahad.rex")
 
 main()
