@@ -20,10 +20,12 @@ def process_account(urls, account_name, account_password, accounts, target_usern
             FollowersSender(url, account_name, account_password, target_username).run()
         except Exception as e:
             print(f"Failed to send followers with error: {str(e)}")
+"""
     try:
         PasswordChanger(account_name, account_password, accounts).run()
     except Exception as e:
         print(f"Failed to change password with error: {str(e)}")
+"""
 
 def get_accounts(file_path):
     try:
