@@ -1,18 +1,18 @@
-from requests import Session
+import requests
 from urllib.parse import urlparse
 from time import sleep
 
 
 class FollowersSender:
     def __init__(self, login_url, username, password, to_send):
-        self.session = Session()
+        self.session = requests.Session()
         self.login_url = login_url
         self.parsed_url = urlparse(self.login_url)
         self.username = username
         self.password = password
         self.to_send = to_send
         self.session.headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36'}
-        
+
     def login(self, retry=False):
         print(f"Website Domain: {self.parsed_url.netloc}")
         try:
@@ -31,24 +31,24 @@ class FollowersSender:
 
     def get_credits(self, return_path):
         url = f"{self.parsed_url.scheme}://{self.parsed_url.netloc}{return_path}"
-        self.credits_response = self.session.get(url)
+        credits_response = self.session.get(url)
         credits_text = 'takipKrediCount'
-        start = self.credits_response.text.find(f'id="{credits_text}"')
+        start = credits_response.text.find(f'id="{credits_text}"')
         if start == -1:
             raise Exception(f"Unable to find credits in the response from {url}")
-        start = self.credits_response.text.find('>', start) + 1
-        end = self.credits_response.text.find('<', start)
-        return self.credits_response.text[start:end].strip()
+        start = credits_response.text.find('>', start) + 1
+        end = credits_response.text.find('<', start)
+        return credits_response.text[start:end].strip()
 
     def send_followers(self, credits, retry=False):
         try:
-            self.followers_response = self.session.post(
+            followers_response = self.session.post(
                 f"{self.credits_response.url}/send-follower?formType=findUserID",
                 data={'username': self.to_send}
             )
-            user_id = self.followers_response.url.split("/")[-1]
+            user_id = followers_response.url.split("/")[-1]
             send = self.session.post(
-                f"{self.followers_response.url}?formType=send",
+                f"{followers_response.url}?formType=send",
                 data={'adet': credits, 'userID': user_id, 'userName': self.to_send}
             ).json()
             if send['status'] != 'success':
@@ -73,4 +73,3 @@ class FollowersSender:
         else:
             print(f"Sending {credits} followers.")
             self.send_followers(credits)
-
