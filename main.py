@@ -14,14 +14,18 @@ URLS = [
     "https://medyahizmeti.com/member",
 ]
 
+
 def process_account(urls, account_name, account_password, accounts, target_username):
     for url in urls:
         try:
-            FollowersSender(url, account_name, account_password, target_username).run()
+            sender = FollowersSender(url, account_name, account_password, target_username)
+            sender.run()
         except Exception as e:
             print(f"Failed to send followers with error: {str(e)}")
+
     try:
-        PasswordChanger(account_name, account_password, accounts).run()
+        changer = PasswordChanger(account_name, account_password, accounts)
+        changer.run()
     except Exception as e:
         print(f"Failed to change password with error: {str(e)}")
 
@@ -37,10 +41,13 @@ def get_accounts(file_path):
         print(f"Failed to parse the JSON data from {file_path}.")
         return {}
 
+
 def main():
     accounts = get_accounts("config.json")
     for account_name, account_password in accounts.items():
         print(f"Processing account: {account_name}")
         process_account(URLS, account_name, account_password, accounts, "ahad.rex")
 
-main()
+
+if __name__ == "__main__":
+    main()
