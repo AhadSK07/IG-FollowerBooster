@@ -2,12 +2,12 @@ import json
 import random
 import string
 
-from requests import Session
+import requests
 
 
 class PasswordChanger:
     def __init__(self, username, password, accounts):
-        self.session = Session()
+        self.session = requests.Session()
         self.username = username
         self.password = password
         self.accounts = accounts
@@ -68,9 +68,10 @@ class PasswordChanger:
         response_json = response.json()
         if 'userId' not in response_json:
             print(f"Login Failed! {response_json}")
+            return False
         else:
             print("Instagram login successful")
-            return response.cookies 
+            return response.cookies
 
     def change_password(self):
         change_data = {
